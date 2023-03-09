@@ -40,6 +40,15 @@ struct ProgressBar {
 		return step >= size;
 	}
 
+	void operator++(int) {
+		step++;
+	}
+
+	ProgressBar& operator+=(int s) {
+		step += s;
+		return *this;
+	}
+
 	unsigned size, step = 0;
 	const char filler;
 };
@@ -103,14 +112,14 @@ int main() {
 		for (size_t i = 0; i < 30; ++i) {
             // directly incrementing the progress bar step is ideal for CPU intensive jobs
             // but print() is never called this way, so it needs to be handled separately
-			pb3.step++;
+			pb3++; // or pn3 += 1
 			std::this_thread::sleep_for(std::chrono::milliseconds(60));
 		}
 	};
 
 	std::thread t1(job1), t2(job2), t3(job3);
 
-    // when directly incrementing the progress like job3 with pb3.step++
+    // when directly incrementing the progress like job3 with pb3++
     // the printing function needs to be called separately like so:
 	do {
 		this_thread::sleep_for(std::chrono::milliseconds(50));
